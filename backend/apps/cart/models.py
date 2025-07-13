@@ -46,6 +46,3 @@ class CartItem(models.Model):
     def subtotal(self):
         return self.price * self.quantity
     
-    
-
-
