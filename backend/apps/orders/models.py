@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from accounts.models import GuestUser
+from apps.accounts.models import GuestUser
 
 
 User = get_user_model()

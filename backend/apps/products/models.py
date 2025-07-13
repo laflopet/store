@@ -12,6 +12,7 @@ class Category(models.Model):
     name = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to='categories/', blank=True)
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
