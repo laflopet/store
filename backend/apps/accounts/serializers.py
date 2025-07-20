@@ -39,3 +39,11 @@ class GuestUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'email', 'username', 'first_name', 'last_name', 
                  'phone', 'role', 'is_active', 'date_joined']
         read_only_fields = ['id', 'date_joined']
+
+
+class AdminUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'username', 'first_name', 'last_name', 
+                 'phone', 'role', 'is_active', 'date_joined']
+        read_only_fields = ['id', 'date_joined']

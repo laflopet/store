@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Order, OrderItem, OrderStatusHistory
-from products.serializers import ProductSerializer, ProductVariantSerializer
+from apps.products.serializers import ProductSerializer, ProductVariantSerializer
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)

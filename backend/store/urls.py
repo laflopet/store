@@ -21,8 +21,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('api/accounts/', include('accounts.urls')),
+    path('api/accounts/', include('apps.accounts.urls')),
     path('api/products/', include('apps.products.urls')),
-    # path('api/cart/', include('cart.urls')),
-    # path('api/orders/', include('orders.urls')),
+    # path('api/cart/', include('apps.cart.urls')),
+    path('api/orders/', include('apps.orders.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
