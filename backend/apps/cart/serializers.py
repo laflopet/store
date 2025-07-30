@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Cart, CartItem
-from products.serializers import ProductSerializer, ProductVariantSerializer
+from apps.products.serializers import ProductSerializer, ProductVariantSerializer
 
 class CartItemSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)
@@ -23,7 +23,7 @@ class CartSerializer(serializers.ModelSerializer):
 
 class AddToCartSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
-    variant_id = serializers.IntegerField(required=False)
+    variant_id = serializers.IntegerField(required=False, allow_null=True)
     quantity = serializers.IntegerField(default=1, min_value=1)
     
     def validate_quantity(self, value):

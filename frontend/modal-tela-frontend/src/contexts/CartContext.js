@@ -41,7 +41,14 @@ export const CartProvider = ({ children }) => {
         quantity
       });
       setCart(response.data);
-      toast.success('Producto agregado al carrito');
+      toast.success('Agregado al carrito', {
+        autoClose: 800,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false,
+        toastId: 'cart-add-' + productId // Evita duplicados para el mismo producto
+      });
       return { success: true };
     } catch (error) {
       toast.error('Error al agregar producto al carrito');

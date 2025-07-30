@@ -6,10 +6,22 @@ class OrderItemSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)
     variant = ProductVariantSerializer(read_only=True)
     subtotal = serializers.ReadOnlyField()
+    product_name = serializers.CharField(source='product.name', read_only=True)
+    product_main_image = serializers.CharField(source='product.main_image', read_only=True)
+    variant_details = serializers.SerializerMethodField()
+    
+    def get_variant_details(self, obj):
+        if obj.variant:
+            return {
+                'size': obj.variant.size,
+                'color': obj.variant.color
+            }
+        return None
     
     class Meta:
         model = OrderItem
-        fields = ['id', 'product', 'variant', 'quantity', 'price', 'subtotal']
+        fields = ['id', 'product', 'variant', 'quantity', 'price', 'subtotal', 
+                 'is_prepared', 'product_name', 'product_main_image', 'variant_details']
 
 class OrderStatusHistorySerializer(serializers.ModelSerializer):
     changed_by_name = serializers.CharField(source='changed_by.get_full_name', read_only=True)
@@ -27,7 +39,7 @@ class OrderSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Order
-        fields = ['id', 'order_number', 'status', 'tracking_number', 'assigned_admin', 
+        fields = ['id', 'order_number', 'status', 'tracking_number', 'shipping_company', 'assigned_admin', 
                  'assigned_admin_name', 'billing_first_name', 'billing_last_name', 
                  'billing_email', 'billing_phone', 'billing_address', 'billing_city', 
                  'billing_department', 'billing_postal_code', 'shipping_first_name', 

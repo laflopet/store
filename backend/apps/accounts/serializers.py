@@ -47,3 +47,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'email', 'username', 'first_name', 'last_name', 
                  'phone', 'role', 'is_active', 'date_joined']
         read_only_fields = ['id', 'date_joined']
+        
+    def update(self, instance, validated_data):
+        # Allow role updates for admin management
+        return super().update(instance, validated_data)

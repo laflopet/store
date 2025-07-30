@@ -2,14 +2,8 @@ from django.db import models
 
 
 class Category(models.Model):
-    CATEGORY_CHOICES = [
-        ('hombres', 'Hombres'),
-        ('mujeres', 'Mujeres'),
-        ('ninos', 'Niños'),
-        ('bebes', 'Bebés'),
-    ]
-
-    name = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    name = models.CharField(max_length=50, unique=True)
+    display_name = models.CharField(max_length=100)  # Nombre amigable para mostrar
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to='categories/', blank=True)
     is_active = models.BooleanField(default=True)
@@ -19,7 +13,7 @@ class Category(models.Model):
         verbose_name_plural = 'Categories'
     
     def __str__(self):
-        return self.get_name_display()
+        return self.display_name or self.name
     
 
 class Subcategory(models.Model):
@@ -38,7 +32,6 @@ class Subcategory(models.Model):
 class Brand(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    logo = models.ImageField(upload_to='brands/', blank=True)
     is_active = models.BooleanField(default=True)
     
     def __str__(self):
@@ -64,8 +57,12 @@ class Product(models.Model):
     
     @property
     def main_image(self):
+        from django.conf import settings
         image = self.images.filter(is_main=True).first()
-        return image.image.url if image else None
+        if image:
+            # Return full URL for frontend
+            return f"http://localhost:8000{image.image.url}"
+        return None
     
     @property
     def is_in_stock(self):

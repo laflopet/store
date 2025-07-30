@@ -46,3 +46,7 @@ class CartItem(models.Model):
     def subtotal(self):
         return self.price * self.quantity
     
+    @property
+    def total_price(self):
+        return self.subtotal
+    

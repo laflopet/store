@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-//import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
-import axios from 'axios';
-
-
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +16,7 @@ const Register = () => {
     password_confirm: ''
   });
   const [loading, setLoading] = useState(false);
-  //const { register } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -39,7 +36,7 @@ const Register = () => {
     
     setLoading(true);
 
-    const result = await axios.post('http://127.0.0.1:8000/api/accounts/register/', formData)//await register(formData);
+    const result = await register(formData);
     
     if (result.success) {
       toast.success('¡Registro exitoso! Bienvenido a Modal Tela');

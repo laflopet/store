@@ -3,13 +3,24 @@ from .models import Category, Subcategory, Brand, Product, ProductVariant, Produ
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    
+    def get_image(self, obj):
+        if obj.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            else:
+                return f"http://localhost:8000{obj.image.url}"
+        return None
+    
     class Meta:
         model = Category
-        fields = ['id', 'name', 'description', 'image', 'is_active']
+        fields = ['id', 'name', 'display_name', 'description', 'image', 'is_active', 'created_at']
       
 
 class SubcategorySerializer(serializers.ModelSerializer):
-    category_name = serializers.CharField(source='category.get_name_display', read_only=True)
+    category_name = serializers.CharField(source='category.display_name', read_only=True)
     
     class Meta:
         model = Subcategory
@@ -18,9 +29,20 @@ class SubcategorySerializer(serializers.ModelSerializer):
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
-        fields = ['id', 'name', 'description', 'logo', 'is_active']
+        fields = ['id', 'name', 'description', 'is_active']
 
 class ProductImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    
+    def get_image(self, obj):
+        if obj.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            else:
+                return f"http://localhost:8000{obj.image.url}"
+        return None
+    
     class Meta:
         model = ProductImage
         fields = ['id', 'image', 'is_main', 'order']
@@ -34,7 +56,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category_name = serializers.CharField(source='category.get_name_display', read_only=True)
+    category_name = serializers.CharField(source='category.display_name', read_only=True)
     subcategory_name = serializers.CharField(source='subcategory.name', read_only=True)
     brand_name = serializers.CharField(source='brand.name', read_only=True)
     images = ProductImageSerializer(many=True, read_only=True)
@@ -51,7 +73,7 @@ class ProductSerializer(serializers.ModelSerializer):
         
 
 class ProductListSerializer(serializers.ModelSerializer):
-    category_name = serializers.CharField(source='category.get_name_display', read_only=True)
+    category_name = serializers.CharField(source='category.display_name', read_only=True)
     brand_name = serializers.CharField(source='brand.name', read_only=True)
     main_image = serializers.ReadOnlyField()
     is_in_stock = serializers.ReadOnlyField()
