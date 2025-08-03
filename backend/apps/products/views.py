@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from .models import Category, Subcategory, Brand, Product, ProductImage, ProductVariant
-from .serializers import (CategorySerializer, SubcategorySerializer, 
+from .serializers import (CategorySerializer, CategoryWriteSerializer, SubcategorySerializer, 
                          BrandSerializer, ProductSerializer, ProductListSerializer, ProductImageSerializer, ProductVariantSerializer)
 
 class CategoryListView(generics.ListAPIView):
@@ -173,7 +173,7 @@ class AdminCategoryListView(generics.ListAPIView):
 
 
 class AdminCategoryCreateView(generics.CreateAPIView):
-    serializer_class = CategorySerializer
+    serializer_class = CategoryWriteSerializer
     permission_classes = [permissions.IsAuthenticated]
     
     def perform_create(self, serializer):
@@ -183,7 +183,7 @@ class AdminCategoryCreateView(generics.CreateAPIView):
 
 
 class AdminCategoryUpdateView(generics.UpdateAPIView):
-    serializer_class = CategorySerializer
+    serializer_class = CategoryWriteSerializer
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
@@ -202,9 +202,12 @@ class AdminCategoryDeleteView(generics.DestroyAPIView):
         return Category.objects.all()
     
     def perform_destroy(self, instance):
-        # Instead of deleting, just deactivate the category
-        instance.is_active = False
-        instance.save()
+        # Check if category has products before deleting
+        if instance.products.exists():
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError('No se puede eliminar una categoría que tiene productos asociados')
+        # Delete the category completely
+        instance.delete()
 
 
 # Brand Management Views
@@ -248,9 +251,12 @@ class AdminBrandDeleteView(generics.DestroyAPIView):
         return Brand.objects.all()
     
     def perform_destroy(self, instance):
-        # Instead of deleting, just deactivate the brand
-        instance.is_active = False
-        instance.save()
+        # Check if brand has products before deleting
+        if instance.products.exists():
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError('No se puede eliminar una marca que tiene productos asociados')
+        # Delete the brand completely
+        instance.delete()
 
 
 # Product Variants Management Views

@@ -437,7 +437,8 @@ const AdminPanel = () => {
     formData.append('description', categoryForm.description);
     formData.append('is_active', categoryForm.is_active);
     
-    if (categoryForm.image) {
+    // Only append image if a new one is selected
+    if (categoryForm.image && categoryForm.image instanceof File) {
       formData.append('image', categoryForm.image);
     }
 
@@ -491,25 +492,31 @@ const AdminPanel = () => {
   };
 
   const toggleCategoryStatus = async (categoryId, currentStatus) => {
-    try {
-      await axios.patch(`/api/products/admin/categories/${categoryId}/`, {
-        is_active: !currentStatus
-      });
-      toast.success(`Categoría ${!currentStatus ? 'activada' : 'desactivada'} exitosamente`);
-      loadCategoriesAdmin();
-    } catch (error) {
-      toast.error('Error al cambiar estado de la categoría');
+    const newStatus = !currentStatus;
+    const action = newStatus ? 'activar' : 'desactivar';
+    
+    if (window.confirm(`¿Estás seguro de que quieres ${action} esta categoría?`)) {
+      try {
+        await axios.patch(`/api/products/admin/categories/${categoryId}/`, {
+          is_active: newStatus
+        });
+        toast.success(`Categoría ${newStatus ? 'activada' : 'desactivada'} exitosamente`);
+        loadCategoriesAdmin();
+      } catch (error) {
+        toast.error(`Error al ${action} categoría`);
+      }
     }
   };
 
   const deleteCategory = async (categoryId) => {
-    if (window.confirm('¿Estás seguro de que quieres desactivar esta categoría?')) {
+    if (window.confirm('¿Estás seguro de que quieres eliminar esta categoría? Esta acción no se puede deshacer.')) {
       try {
         await axios.delete(`/api/products/admin/categories/${categoryId}/delete/`);
-        toast.success('Categoría desactivada exitosamente');
+        toast.success('Categoría eliminada exitosamente');
         loadCategoriesAdmin();
       } catch (error) {
-        toast.error('Error al desactivar categoría');
+        const errorMessage = error.response?.data?.detail || error.response?.data?.error || 'Error al eliminar categoría';
+        toast.error(errorMessage);
       }
     }
   };
@@ -542,7 +549,6 @@ const AdminPanel = () => {
       setBrandForm({
         name: '',
         description: '',
-        logo: null,
         is_active: true
       });
       setEditingBrand(null);
@@ -573,25 +579,31 @@ const AdminPanel = () => {
   };
 
   const toggleBrandStatus = async (brandId, currentStatus) => {
-    try {
-      await axios.patch(`/api/products/admin/brands/${brandId}/`, {
-        is_active: !currentStatus
-      });
-      toast.success(`Marca ${!currentStatus ? 'activada' : 'desactivada'} exitosamente`);
-      loadBrandsAdmin();
-    } catch (error) {
-      toast.error('Error al cambiar estado de la marca');
+    const newStatus = !currentStatus;
+    const action = newStatus ? 'activar' : 'desactivar';
+    
+    if (window.confirm(`¿Estás seguro de que quieres ${action} esta marca?`)) {
+      try {
+        await axios.patch(`/api/products/admin/brands/${brandId}/`, {
+          is_active: newStatus
+        });
+        toast.success(`Marca ${newStatus ? 'activada' : 'desactivada'} exitosamente`);
+        loadBrandsAdmin();
+      } catch (error) {
+        toast.error(`Error al ${action} marca`);
+      }
     }
   };
 
   const deleteBrand = async (brandId) => {
-    if (window.confirm('¿Estás seguro de que quieres desactivar esta marca?')) {
+    if (window.confirm('¿Estás seguro de que quieres eliminar esta marca? Esta acción no se puede deshacer.')) {
       try {
         await axios.delete(`/api/products/admin/brands/${brandId}/delete/`);
-        toast.success('Marca desactivada exitosamente');
+        toast.success('Marca eliminada exitosamente');
         loadBrandsAdmin();
       } catch (error) {
-        toast.error('Error al desactivar marca');
+        const errorMessage = error.response?.data?.detail || error.response?.data?.error || 'Error al eliminar marca';
+        toast.error(errorMessage);
       }
     }
   };

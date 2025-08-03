@@ -17,6 +17,15 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name', 'display_name', 'description', 'image', 'is_active', 'created_at']
+
+
+class CategoryWriteSerializer(serializers.ModelSerializer):
+    """Serializer for creating/updating categories with image upload support"""
+    
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'display_name', 'description', 'image', 'is_active', 'created_at']
+        read_only_fields = ['id', 'created_at']
       
 
 class SubcategorySerializer(serializers.ModelSerializer):
